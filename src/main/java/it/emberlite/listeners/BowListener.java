@@ -51,15 +51,11 @@ public class BowListener implements Listener {
     public void onShoot(ProjectileLaunchEvent event) {
         if (!(event.getEntity() instanceof Arrow arrow)) return;
         if (!(arrow.getShooter() instanceof Player player)) return;
-
         ItemStack bow = player.getInventory().getItemInMainHand();
         if (!AetheriumItems.isAetherium(bow, AetheriumItems.TYPE_BOW)) return;
-
         arrow.setMetadata(META_KEY, new FixedMetadataValue(plugin, true));
-
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            it.emberlite.utils.BlockUtils.damageTool(player, bow, 2);
-        }, 1L);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                it.emberlite.utils.BlockUtils.damageTool(player, bow, 2), 1L);
     }
 
     @EventHandler
@@ -67,23 +63,20 @@ public class BowListener implements Listener {
         if (!(event.getEntity() instanceof Arrow arrow)) return;
         if (!arrow.hasMetadata(META_KEY)) return;
         if (!(arrow.getShooter() instanceof Player shooter)) return;
-
-        Location loc = arrow.getLocation();
+        Location loc = arrow.getLocation().clone();
         arrow.remove();
         event.setCancelled(true);
-
+        if (loc.getWorld() == null) return;
         loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 5, 0.5, 0.5, 0.5, 0);
         loc.getWorld().spawnParticle(Particle.SMOKE_LARGE, loc, 15, 0.5, 0.5, 0.5, 0.05);
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 0.6f, 1.8f);
-
         for (Entity entity : loc.getWorld().getNearbyEntities(loc, 2.5, 2.5, 2.5)) {
-            if (entity instanceof LivingEntity living && !entity.equals(shooter)) {
-                double dist = entity.getLocation().distance(loc);
-                double damage = Math.max(1.0, 6.0 - dist * 1.5);
-                living.damage(damage, shooter);
-            }
+            if (entity.equals(shooter)) continue;
+            if (!(entity instanceof LivingEntity living)) continue;
+            double dist = entity.getLocation().distance(loc);
+            double damage = Math.max(1.0, 6.0 - dist * 1.5);
+            living.damage(damage, shooter);
         }
-
         breakNearbyBlocks(loc, 1);
     }
 
@@ -94,9 +87,7 @@ public class BowListener implements Listener {
                     Block b = center.getBlock().getRelative(dx, dy, dz);
                     if (b.getType().isAir()) continue;
                     if (PROTECTED.contains(b.getType())) continue;
-                    if (FRAGILE.contains(b.getType())) {
-                        b.breakNaturally();
-                    }
+                    if (FRAGILE.contains(b.getType())) b.breakNaturally();
                 }
             }
         }

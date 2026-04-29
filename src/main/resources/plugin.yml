@@ -1,8 +1,8 @@
 name: Emberlite
 version: 1.0.0
 main: it.emberlite.EmberLitePlugin
-api-version: 1.20
-description: Plugin con set di strumenti Aetherium custom
+api-version: 1.21
+description: Plugin Emberlite con set Aetherium custom
 
 commands:
   emberlite:

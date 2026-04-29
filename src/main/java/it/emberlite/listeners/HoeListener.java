@@ -24,7 +24,6 @@ public class HoeListener implements Listener {
             Material.DIRT, Material.GRASS_BLOCK, Material.DIRT_PATH,
             Material.COARSE_DIRT, Material.ROOTED_DIRT
     );
-
     private static final Set<Material> CROPS = Set.of(
             Material.WHEAT, Material.CARROTS, Material.POTATOES,
             Material.BEETROOTS, Material.NETHER_WART, Material.MELON_STEM,
@@ -40,36 +39,24 @@ public class HoeListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND) return;
         Player player = event.getPlayer();
         ItemStack hand = player.getInventory().getItemInMainHand();
-
         if (!AetheriumItems.isAetherium(hand, AetheriumItems.TYPE_HOE)) return;
         if (player.getGameMode() == GameMode.CREATIVE) return;
         if (event.getClickedBlock() == null) return;
-
         Block center = event.getClickedBlock();
-
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 Block b = center.getRelative(dx, 0, dz);
-
-                if (TILLABLE.contains(b.getType())) {
-                    b.setType(Material.FARMLAND);
-                }
-
+                if (TILLABLE.contains(b.getType())) b.setType(Material.FARMLAND);
                 Block above = b.getRelative(0, 1, 0);
                 if (CROPS.contains(above.getType())) {
                     BlockData data = above.getBlockData();
-                    if (data instanceof Ageable ageable) {
-                        int current = ageable.getAge();
-                        int max = ageable.getMaximumAge();
-                        if (current < max) {
-                            ageable.setAge(current + 1);
-                            above.setBlockData(ageable);
-                        }
+                    if (data instanceof Ageable ageable && ageable.getAge() < ageable.getMaximumAge()) {
+                        ageable.setAge(ageable.getAge() + 1);
+                        above.setBlockData(ageable);
                     }
                 }
             }
         }
-
         event.setCancelled(true);
     }
 }

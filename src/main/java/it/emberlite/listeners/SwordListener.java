@@ -24,10 +24,8 @@ public class SwordListener implements Listener {
     public void onHit(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!(event.getEntity() instanceof LivingEntity target)) return;
-
         ItemStack hand = player.getInventory().getItemInMainHand();
         if (!AetheriumItems.isAetherium(hand, AetheriumItems.TYPE_SWORD)) return;
-
         swordManager.registerHit(player, target);
     }
 }

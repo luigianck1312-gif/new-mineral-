@@ -23,10 +23,8 @@ public class PickaxeListener implements Listener {
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         ItemStack hand = player.getInventory().getItemInMainHand();
-
         if (!AetheriumItems.isAetherium(hand, AetheriumItems.TYPE_PICKAXE)) return;
         if (player.getGameMode() == GameMode.CREATIVE) return;
-
         Block center = event.getBlock();
         for (Block b : BlockUtils.get3x3Blocks(center, player)) {
             if (b.equals(center)) continue;

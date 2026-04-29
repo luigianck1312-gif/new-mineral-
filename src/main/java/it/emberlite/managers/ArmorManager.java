@@ -22,13 +22,12 @@ public class ArmorManager {
     private final Map<UUID, Long> legsCooldown      = new HashMap<>();
     private final Map<UUID, Long> bootsCooldown     = new HashMap<>();
 
-    private static final long COOLDOWN_MS    = 20_000L;
-    private static final double TRIGGER_HEALTH = 12.0;
-
-    private static final double HELMET_HEAL = 2.0;
-    private static final double CHEST_HEAL  = 4.0;
-    private static final double LEGS_HEAL   = 3.0;
-    private static final double BOOTS_HEAL  = 1.0;
+    private static final long   COOLDOWN_MS     = 20_000L;
+    private static final double TRIGGER_HEALTH  = 12.0;
+    private static final double HELMET_HEAL     = 2.0;
+    private static final double CHEST_HEAL      = 4.0;
+    private static final double LEGS_HEAL       = 3.0;
+    private static final double BOOTS_HEAL      = 1.0;
 
     public ArmorManager(EmberLitePlugin plugin) {
         this.plugin = plugin;
@@ -41,40 +40,27 @@ public class ArmorManager {
         UUID uuid = player.getUniqueId();
         long now = System.currentTimeMillis();
 
-        ItemStack helmet = player.getInventory().getHelmet();
-        ItemStack chest  = player.getInventory().getChestplate();
-        ItemStack legs   = player.getInventory().getLeggings();
-        ItemStack boots  = player.getInventory().getBoots();
-
-        boolean hasHelmet = AetheriumItems.isAetherium(helmet, AetheriumItems.TYPE_HELMET);
-        boolean hasChest  = AetheriumItems.isAetherium(chest,  AetheriumItems.TYPE_CHESTPLATE);
-        boolean hasLegs   = AetheriumItems.isAetherium(legs,   AetheriumItems.TYPE_LEGGINGS);
-        boolean hasBoots  = AetheriumItems.isAetherium(boots,  AetheriumItems.TYPE_BOOTS);
+        boolean hasHelmet = AetheriumItems.isAetherium(player.getInventory().getHelmet(),     AetheriumItems.TYPE_HELMET);
+        boolean hasChest  = AetheriumItems.isAetherium(player.getInventory().getChestplate(), AetheriumItems.TYPE_CHESTPLATE);
+        boolean hasLegs   = AetheriumItems.isAetherium(player.getInventory().getLeggings(),   AetheriumItems.TYPE_LEGGINGS);
+        boolean hasBoots  = AetheriumItems.isAetherium(player.getInventory().getBoots(),      AetheriumItems.TYPE_BOOTS);
 
         boolean healed = false;
 
         if (hasHelmet && canTrigger(helmetCooldown, uuid, now)) {
-            heal(player, HELMET_HEAL);
-            helmetCooldown.put(uuid, now);
-            healed = true;
+            heal(player, HELMET_HEAL); helmetCooldown.put(uuid, now); healed = true;
             player.sendMessage(ChatColor.GOLD + "Elmo Aetherium: +1 cuore");
         }
         if (hasChest && canTrigger(chestCooldown, uuid, now)) {
-            heal(player, CHEST_HEAL);
-            chestCooldown.put(uuid, now);
-            healed = true;
+            heal(player, CHEST_HEAL); chestCooldown.put(uuid, now); healed = true;
             player.sendMessage(ChatColor.GOLD + "Petto Aetherium: +2 cuori");
         }
         if (hasLegs && canTrigger(legsCooldown, uuid, now)) {
-            heal(player, LEGS_HEAL);
-            legsCooldown.put(uuid, now);
-            healed = true;
+            heal(player, LEGS_HEAL); legsCooldown.put(uuid, now); healed = true;
             player.sendMessage(ChatColor.GOLD + "Gambe Aetherium: +1.5 cuori");
         }
         if (hasBoots && canTrigger(bootsCooldown, uuid, now)) {
-            heal(player, BOOTS_HEAL);
-            bootsCooldown.put(uuid, now);
-            healed = true;
+            heal(player, BOOTS_HEAL); bootsCooldown.put(uuid, now); healed = true;
             player.sendMessage(ChatColor.GOLD + "Stivali Aetherium: +0.5 cuore");
         }
 
@@ -93,8 +79,8 @@ public class ArmorManager {
         player.setHealth(newHealth);
     }
 
-    private boolean canTrigger(Map<UUID, Long> cooldownMap, UUID uuid, long now) {
-        Long last = cooldownMap.get(uuid);
+    private boolean canTrigger(Map<UUID, Long> map, UUID uuid, long now) {
+        Long last = map.get(uuid);
         return last == null || (now - last) >= COOLDOWN_MS;
     }
 

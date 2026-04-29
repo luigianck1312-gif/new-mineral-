@@ -32,8 +32,8 @@ public class AxeListener implements Listener {
     private static final Set<Material> LEAF_TYPES = Set.of(
             Material.OAK_LEAVES, Material.BIRCH_LEAVES, Material.SPRUCE_LEAVES,
             Material.JUNGLE_LEAVES, Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES,
-            Material.MANGROVE_LEAVES, Material.CHERRY_LEAVES, Material.AZALEA_LEAVES,
-            Material.FLOWERING_AZALEA_LEAVES
+            Material.MANGROVE_LEAVES, Material.CHERRY_LEAVES,
+            Material.AZALEA_LEAVES, Material.FLOWERING_AZALEA_LEAVES
     );
 
     public AxeListener(EmberLitePlugin plugin) {
@@ -44,14 +44,11 @@ public class AxeListener implements Listener {
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         ItemStack hand = player.getInventory().getItemInMainHand();
-
         if (!AetheriumItems.isAetherium(hand, AetheriumItems.TYPE_AXE)) return;
         if (player.getGameMode() == GameMode.CREATIVE) return;
-
         Block broken = event.getBlock();
         if (!LOG_TYPES.contains(broken.getType())) return;
         if (!hasLeavesNearby(broken)) return;
-
         List<Block> logs = findConnectedLogs(broken);
         for (Block log : logs) {
             if (log.equals(broken)) continue;
@@ -66,11 +63,9 @@ public class AxeListener implements Listener {
         Set<Block> visited = new HashSet<>();
         queue.add(start);
         visited.add(start);
-
         while (!queue.isEmpty() && found.size() < MAX_LOGS) {
             Block current = queue.poll();
             found.add(current);
-
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dy = 0; dy <= 1; dy++) {
                     for (int dz = -1; dz <= 1; dz++) {
@@ -87,13 +82,10 @@ public class AxeListener implements Listener {
     }
 
     private boolean hasLeavesNearby(Block block) {
-        for (int dx = -3; dx <= 3; dx++) {
-            for (int dy = -1; dy <= 5; dy++) {
-                for (int dz = -3; dz <= 3; dz++) {
+        for (int dx = -3; dx <= 3; dx++)
+            for (int dy = -1; dy <= 5; dy++)
+                for (int dz = -3; dz <= 3; dz++)
                     if (LEAF_TYPES.contains(block.getRelative(dx, dy, dz).getType())) return true;
-                }
-            }
-        }
         return false;
     }
 }

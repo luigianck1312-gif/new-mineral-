@@ -24,7 +24,6 @@ public class BlockUtils {
     public static List<Block> get3x3Blocks(Block center, Player player) {
         List<Block> blocks = new ArrayList<>();
         BlockFace face = getTargetFace(player);
-
         for (int a = -1; a <= 1; a++) {
             for (int b = -1; b <= 1; b++) {
                 Block rel;
@@ -45,7 +44,6 @@ public class BlockUtils {
         float pitch = player.getLocation().getPitch();
         if (pitch < -45) return BlockFace.UP;
         if (pitch > 45)  return BlockFace.DOWN;
-
         float yaw = player.getLocation().getYaw();
         if (yaw < 0) yaw += 360;
         if (yaw < 45 || yaw >= 315) return BlockFace.SOUTH;
@@ -62,12 +60,10 @@ public class BlockUtils {
         if (tool == null || !tool.hasItemMeta()) return;
         ItemMeta meta = tool.getItemMeta();
         if (!(meta instanceof Damageable damageable)) return;
-
         if (tool.getEnchantments().containsKey(org.bukkit.enchantments.Enchantment.DURABILITY)) {
             int level = tool.getEnchantmentLevel(org.bukkit.enchantments.Enchantment.DURABILITY);
             if (Math.random() < (double) level / (level + 1)) return;
         }
-
         int newDamage = damageable.getDamage() + amount;
         if (newDamage >= tool.getType().getMaxDurability()) {
             player.getInventory().setItemInMainHand(null);
