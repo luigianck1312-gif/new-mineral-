@@ -37,15 +37,12 @@ public class SwordManager {
         comboCount.put(uuid, count);
 
         if (count < COMBO_REQUIRED) {
-            // sendActionBar e' sicuro dal main thread (gli eventi sono sul main thread)
             player.sendActionBar("§6Combo: §e" + count + "§7/§e" + COMBO_REQUIRED);
         }
 
         if (count >= COMBO_REQUIRED) {
             comboCount.put(uuid, 0);
-            // Salva la location prima di entrare nel scheduler per evitare problemi
             final Location epicenter = target.getLocation().clone();
-            // Esegui l'area attack sul prossimo tick del main thread
             Bukkit.getScheduler().runTask(plugin, () -> triggerAreaAttack(player, epicenter));
         }
 
@@ -57,16 +54,13 @@ public class SwordManager {
     }
 
     private void triggerAreaAttack(Player attacker, Location epicenter) {
-        // Controllo sicurezza: giocatore ancora online e mondo valido
         if (!attacker.isOnline()) return;
         if (epicenter.getWorld() == null) return;
-
         try {
             attacker.sendActionBar("§cCOLPO AD AREA!");
             epicenter.getWorld().playSound(epicenter, Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 1.5f);
-            epicenter.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, epicenter, 20, 1.0, 0.5, 1.0, 0.1);
+            epicenter.getWorld().spawnParticle(Particle.POOF, epicenter, 20, 1.0, 0.5, 1.0, 0.1);
             epicenter.getWorld().spawnParticle(Particle.SWEEP_ATTACK, epicenter, 10, 1.0, 0.5, 1.0, 0.0);
-
             for (Entity entity : epicenter.getWorld().getNearbyEntities(epicenter, AREA_RADIUS, AREA_RADIUS, AREA_RADIUS)) {
                 if (entity.equals(attacker)) continue;
                 if (!(entity instanceof LivingEntity living)) continue;
@@ -77,7 +71,7 @@ public class SwordManager {
                 }
             }
         } catch (Exception e) {
-            plugin.getLogger().warning("Errore area attack Aetherium: " + e.getMessage());
+            plugin.getLogger().warning("Errore area attack: " + e.getMessage());
         }
     }
 

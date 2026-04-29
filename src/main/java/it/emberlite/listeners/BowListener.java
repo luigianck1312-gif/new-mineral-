@@ -67,8 +67,8 @@ public class BowListener implements Listener {
         arrow.remove();
         event.setCancelled(true);
         if (loc.getWorld() == null) return;
-        loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 5, 0.5, 0.5, 0.5, 0);
-        loc.getWorld().spawnParticle(Particle.SMOKE_LARGE, loc, 15, 0.5, 0.5, 0.5, 0.05);
+        loc.getWorld().spawnParticle(Particle.EXPLOSION, loc, 5, 0.5, 0.5, 0.5, 0);
+        loc.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 15, 0.5, 0.5, 0.5, 0.05);
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 0.6f, 1.8f);
         for (Entity entity : loc.getWorld().getNearbyEntities(loc, 2.5, 2.5, 2.5)) {
             if (entity.equals(shooter)) continue;

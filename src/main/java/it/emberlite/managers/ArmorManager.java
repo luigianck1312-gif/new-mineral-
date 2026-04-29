@@ -5,7 +5,6 @@ import it.emberlite.items.AetheriumItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -16,18 +15,17 @@ import java.util.UUID;
 public class ArmorManager {
 
     private final EmberLitePlugin plugin;
-
     private final Map<UUID, Long> helmetCooldown    = new HashMap<>();
     private final Map<UUID, Long> chestCooldown     = new HashMap<>();
     private final Map<UUID, Long> legsCooldown      = new HashMap<>();
     private final Map<UUID, Long> bootsCooldown     = new HashMap<>();
 
-    private static final long   COOLDOWN_MS     = 20_000L;
-    private static final double TRIGGER_HEALTH  = 12.0;
-    private static final double HELMET_HEAL     = 2.0;
-    private static final double CHEST_HEAL      = 4.0;
-    private static final double LEGS_HEAL       = 3.0;
-    private static final double BOOTS_HEAL      = 1.0;
+    private static final long   COOLDOWN_MS    = 20_000L;
+    private static final double TRIGGER_HEALTH = 12.0;
+    private static final double HELMET_HEAL    = 2.0;
+    private static final double CHEST_HEAL     = 4.0;
+    private static final double LEGS_HEAL      = 3.0;
+    private static final double BOOTS_HEAL     = 1.0;
 
     public ArmorManager(EmberLitePlugin plugin) {
         this.plugin = plugin;
@@ -65,7 +63,7 @@ public class ArmorManager {
         }
 
         if (hasHelmet && hasChest && hasLegs && hasBoots && healed) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 0, true, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 60, 0, true, false));
             player.sendMessage(ChatColor.AQUA + "Set Aetherium: Resistenza I per 3 sec!");
         }
 

@@ -21,7 +21,6 @@ public class EmberLitePlugin extends JavaPlugin {
         instance = this;
         swordManager = new SwordManager(this);
         armorManager = new ArmorManager(this);
-
         getServer().getPluginManager().registerEvents(new SwordListener(this, swordManager), this);
         getServer().getPluginManager().registerEvents(new ArmorListener(this, armorManager), this);
         getServer().getPluginManager().registerEvents(new PickaxeListener(this), this);
@@ -29,7 +28,6 @@ public class EmberLitePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ShovelListener(this), this);
         getServer().getPluginManager().registerEvents(new HoeListener(this), this);
         getServer().getPluginManager().registerEvents(new BowListener(this), this);
-
         getLogger().info("Emberlite caricato! Set Aetherium pronto.");
     }
 
@@ -49,12 +47,8 @@ public class EmberLitePlugin extends JavaPlugin {
             sender.sendMessage("§eUso: /emberlite give <player> <spada|elmo|petto|gambe|stivali|piccone|ascia|pala|zappa|arco|gemma|blocco>");
             return true;
         }
-
         Player target = getServer().getPlayer(args[1]);
-        if (target == null) {
-            sender.sendMessage("§cGiocatore non trovato!");
-            return true;
-        }
+        if (target == null) { sender.sendMessage("§cGiocatore non trovato!"); return true; }
 
         ItemStack item = switch (args[2].toLowerCase()) {
             case "spada"   -> AetheriumItems.getSword();
@@ -72,14 +66,10 @@ public class EmberLitePlugin extends JavaPlugin {
             default        -> null;
         };
 
-        if (item == null) {
-            sender.sendMessage("§cOggetto non valido!");
-            return true;
-        }
-
+        if (item == null) { sender.sendMessage("§cOggetto non valido!"); return true; }
         target.getInventory().addItem(item);
-        sender.sendMessage("§aDato §e" + args[2] + " Aetherium §aa §e" + target.getName());
-        target.sendMessage("§6Hai ricevuto: §e" + item.getItemMeta().getDisplayName());
+        sender.sendMessage("§aDato §e" + args[2] + " §aa §e" + target.getName());
+        target.sendMessage("§6Hai ricevuto un oggetto §eAetherium§6!");
         return true;
     }
 

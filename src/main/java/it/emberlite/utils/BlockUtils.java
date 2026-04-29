@@ -3,6 +3,7 @@ package it.emberlite.utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -60,8 +61,8 @@ public class BlockUtils {
         if (tool == null || !tool.hasItemMeta()) return;
         ItemMeta meta = tool.getItemMeta();
         if (!(meta instanceof Damageable damageable)) return;
-        if (tool.getEnchantments().containsKey(org.bukkit.enchantments.Enchantment.DURABILITY)) {
-            int level = tool.getEnchantmentLevel(org.bukkit.enchantments.Enchantment.DURABILITY);
+        if (tool.getEnchantments().containsKey(Enchantment.UNBREAKING)) {
+            int level = tool.getEnchantmentLevel(Enchantment.UNBREAKING);
             if (Math.random() < (double) level / (level + 1)) return;
         }
         int newDamage = damageable.getDamage() + amount;

@@ -61,22 +61,18 @@ public class AxeListener implements Listener {
         List<Block> found = new ArrayList<>();
         Queue<Block> queue = new LinkedList<>();
         Set<Block> visited = new HashSet<>();
-        queue.add(start);
-        visited.add(start);
+        queue.add(start); visited.add(start);
         while (!queue.isEmpty() && found.size() < MAX_LOGS) {
             Block current = queue.poll();
             found.add(current);
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = 0; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dy = 0; dy <= 1; dy++)
                     for (int dz = -1; dz <= 1; dz++) {
-                        Block neighbor = current.getRelative(dx, dy, dz);
-                        if (!visited.contains(neighbor) && LOG_TYPES.contains(neighbor.getType())) {
-                            visited.add(neighbor);
-                            queue.add(neighbor);
+                        Block n = current.getRelative(dx, dy, dz);
+                        if (!visited.contains(n) && LOG_TYPES.contains(n.getType())) {
+                            visited.add(n); queue.add(n);
                         }
                     }
-                }
-            }
         }
         return found;
     }

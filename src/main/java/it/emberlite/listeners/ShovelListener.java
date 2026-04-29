@@ -22,7 +22,7 @@ public class ShovelListener implements Listener {
             Material.DIRT, Material.GRASS_BLOCK, Material.COARSE_DIRT,
             Material.ROOTED_DIRT, Material.PODZOL, Material.MYCELIUM, Material.DIRT_PATH
     );
-    private static final Set<Material> FALLING_TYPES = Set.of(
+    private static final Set<Material> FALLING = Set.of(
             Material.SAND, Material.RED_SAND, Material.GRAVEL
     );
     private static final Set<Material> OTHER = Set.of(
@@ -47,7 +47,7 @@ public class ShovelListener implements Listener {
             if (DIRT_TYPES.contains(b.getType())) {
                 b.setType(Material.DIRT_PATH);
                 BlockUtils.damageTool(player, hand, 1);
-            } else if (FALLING_TYPES.contains(b.getType()) || OTHER.contains(b.getType())) {
+            } else if (FALLING.contains(b.getType()) || OTHER.contains(b.getType())) {
                 b.breakNaturally(hand);
                 BlockUtils.damageTool(player, hand, 1);
             }
