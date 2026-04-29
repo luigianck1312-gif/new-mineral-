@@ -1,0 +1,16 @@
+name: Emberlite
+version: 1.0.0
+main: it.emberlite.EmberLitePlugin
+api-version: 1.20
+description: Plugin con set di strumenti Aetherium custom
+
+commands:
+  emberlite:
+    description: Comandi Emberlite
+    usage: /emberlite give <player> <item>
+    permission: emberlite.admin
+
+permissions:
+  emberlite.admin:
+    description: Accesso ai comandi admin di Emberlite
+    default: op
