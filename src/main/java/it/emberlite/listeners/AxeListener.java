@@ -17,7 +17,24 @@ import java.util.*;
 public class AxeListener implements Listener {
 
     private final EmberLitePlugin plugin;
-    private static final int MAX_LOGS = 150; // Limite anti-lag
+    private static final int MAX_LOGS = 150;
+
+    private static final Set<Material> LOG_TYPES = Set.of(
+            Material.OAK_LOG, Material.BIRCH_LOG, Material.SPRUCE_LOG,
+            Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG,
+            Material.MANGROVE_LOG, Material.CHERRY_LOG, Material.BAMBOO_BLOCK,
+            Material.OAK_WOOD, Material.BIRCH_WOOD, Material.SPRUCE_WOOD,
+            Material.JUNGLE_WOOD, Material.ACACIA_WOOD, Material.DARK_OAK_WOOD,
+            Material.MANGROVE_WOOD, Material.CHERRY_WOOD,
+            Material.MUSHROOM_STEM, Material.BROWN_MUSHROOM_BLOCK, Material.RED_MUSHROOM_BLOCK
+    );
+
+    private static final Set<Material> LEAF_TYPES = Set.of(
+            Material.OAK_LEAVES, Material.BIRCH_LEAVES, Material.SPRUCE_LEAVES,
+            Material.JUNGLE_LEAVES, Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES,
+            Material.MANGROVE_LEAVES, Material.CHERRY_LEAVES, Material.AZALEA_LEAVES,
+            Material.FLOWERING_AZALEA_LEAVES
+    );
 
     public AxeListener(EmberLitePlugin plugin) {
         this.plugin = plugin;
@@ -32,9 +49,7 @@ public class AxeListener implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE) return;
 
         Block broken = event.getBlock();
-        if (!isLog(broken.getType())) return;
-
-        // Controlla che non sia una costruzione player (legno ma con foglie sopra = albero vero)
+        if (!LOG_TYPES.contains(broken.getType())) return;
         if (!hasLeavesNearby(broken)) return;
 
         List<Block> logs = findConnectedLogs(broken);
@@ -56,12 +71,11 @@ public class AxeListener implements Listener {
             Block current = queue.poll();
             found.add(current);
 
-            // Controlla solo in verticale e diagonale vicina (albero = cresce su)
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dy = 0; dy <= 1; dy++) {
                     for (int dz = -1; dz <= 1; dz++) {
                         Block neighbor = current.getRelative(dx, dy, dz);
-                        if (!visited.contains(neighbor) && isLog(neighbor.getType())) {
+                        if (!visited.contains(neighbor) && LOG_TYPES.contains(neighbor.getType())) {
                             visited.add(neighbor);
                             queue.add(neighbor);
                         }
@@ -72,18 +86,11 @@ public class AxeListener implements Listener {
         return found;
     }
 
-    private boolean isLog(Material mat) {
-        String name = mat.name();
-        return name.endsWith("_LOG") || name.endsWith("_WOOD") || name.equals("MUSHROOM_STEM")
-                || name.equals("BROWN_MUSHROOM_BLOCK") || name.equals("RED_MUSHROOM_BLOCK");
-    }
-
     private boolean hasLeavesNearby(Block block) {
         for (int dx = -3; dx <= 3; dx++) {
             for (int dy = -1; dy <= 5; dy++) {
                 for (int dz = -3; dz <= 3; dz++) {
-                    Material mat = block.getRelative(dx, dy, dz).getType();
-                    if (mat.name().contains("LEAVES")) return true;
+                    if (LEAF_TYPES.contains(block.getRelative(dx, dy, dz).getType())) return true;
                 }
             }
         }

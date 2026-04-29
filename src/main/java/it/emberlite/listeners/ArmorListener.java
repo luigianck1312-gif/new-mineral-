@@ -22,7 +22,6 @@ public class ArmorListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        // Controlla DOPO che il danno è applicato (runTaskLater con 1 tick)
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline() && player.getHealth() > 0) {
                 armorManager.checkAndHeal(player);

@@ -28,14 +28,12 @@ public class PickaxeListener implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE) return;
 
         Block center = event.getBlock();
-        // Scava 3x3 attorno al blocco rotto
         for (Block b : BlockUtils.get3x3Blocks(center, player)) {
-            if (b.equals(center)) continue; // evita doppio break
+            if (b.equals(center)) continue;
             if (b.getType().isAir()) continue;
             if (!BlockUtils.isMineable(b)) continue;
             b.breakNaturally(hand);
-            // Consuma durabilità extra (x3)
-            BlockUtils.damageTool(player, hand, 2); // 1 già consumato dall'evento
+            BlockUtils.damageTool(player, hand, 2);
         }
     }
 }

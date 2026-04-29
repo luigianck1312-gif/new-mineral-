@@ -14,9 +14,22 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Set;
+
 public class HoeListener implements Listener {
 
     private final EmberLitePlugin plugin;
+
+    private static final Set<Material> TILLABLE = Set.of(
+            Material.DIRT, Material.GRASS_BLOCK, Material.DIRT_PATH,
+            Material.COARSE_DIRT, Material.ROOTED_DIRT
+    );
+
+    private static final Set<Material> CROPS = Set.of(
+            Material.WHEAT, Material.CARROTS, Material.POTATOES,
+            Material.BEETROOTS, Material.NETHER_WART, Material.MELON_STEM,
+            Material.PUMPKIN_STEM, Material.SWEET_BERRY_BUSH, Material.COCOA
+    );
 
     public HoeListener(EmberLitePlugin plugin) {
         this.plugin = plugin;
@@ -33,22 +46,17 @@ public class HoeListener implements Listener {
         if (event.getClickedBlock() == null) return;
 
         Block center = event.getClickedBlock();
-        Material centerMat = center.getType();
 
-        // Area 3x3 - ara la terra e fa crescere le colture
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 Block b = center.getRelative(dx, 0, dz);
 
-                // Ara: terra/erba → farmland
-                if (b.getType() == Material.DIRT || b.getType() == Material.GRASS_BLOCK
-                        || b.getType() == Material.DIRT_PATH) {
+                if (TILLABLE.contains(b.getType())) {
                     b.setType(Material.FARMLAND);
                 }
 
-                // Fai crescere le colture sopra di 1 stadio
                 Block above = b.getRelative(0, 1, 0);
-                if (isCrop(above.getType())) {
+                if (CROPS.contains(above.getType())) {
                     BlockData data = above.getBlockData();
                     if (data instanceof Ageable ageable) {
                         int current = ageable.getAge();
@@ -62,15 +70,6 @@ public class HoeListener implements Listener {
             }
         }
 
-        event.setCancelled(true); // Previeni il click vanilla normale
-    }
-
-    private boolean isCrop(Material mat) {
-        return switch (mat) {
-            case WHEAT, CARROTS, POTATOES, BEETROOTS, NETHER_WART,
-                    MELON_STEM, PUMPKIN_STEM, SWEET_BERRY_BUSH,
-                    COCOA, BAMBOO -> true;
-            default -> false;
-        };
+        event.setCancelled(true);
     }
 }

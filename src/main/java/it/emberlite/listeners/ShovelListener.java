@@ -10,18 +10,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Set;
 
 public class ShovelListener implements Listener {
 
     private final EmberLitePlugin plugin;
 
+    private static final Set<Material> DIRT_TYPES = Set.of(
+            Material.DIRT, Material.GRASS_BLOCK, Material.COARSE_DIRT,
+            Material.ROOTED_DIRT, Material.PODZOL, Material.MYCELIUM,
+            Material.DIRT_PATH
+    );
+
+    private static final Set<Material> FALLING_TYPES = Set.of(
+            Material.SAND, Material.RED_SAND, Material.GRAVEL
+    );
+
+    private static final Set<Material> OTHER_SHOVEABLE = Set.of(
+            Material.CLAY, Material.SOUL_SAND, Material.SOUL_SOIL,
+            Material.SNOW, Material.SNOW_BLOCK
+    );
+
     public ShovelListener(EmberLitePlugin plugin) {
         this.plugin = plugin;
     }
 
-    // Scavo 3x3 con effetti speciali
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -35,29 +50,17 @@ public class ShovelListener implements Listener {
         for (Block b : BlockUtils.get3x3Blocks(center, player)) {
             if (b.equals(center)) continue;
             if (b.getType().isAir()) continue;
-            if (!isShoveable(b.getType())) continue;
 
-            // Terra → sentiero
-            if (b.getType() == Material.GRASS_BLOCK || b.getType() == Material.DIRT) {
+            if (DIRT_TYPES.contains(b.getType())) {
                 b.setType(Material.DIRT_PATH);
-            }
-            // Sabbia → cade istantaneamente (break)
-            else if (b.getType() == Material.SAND || b.getType() == Material.RED_SAND
-                    || b.getType() == Material.GRAVEL) {
+                BlockUtils.damageTool(player, hand, 1);
+            } else if (FALLING_TYPES.contains(b.getType())) {
                 b.breakNaturally(hand);
-            } else {
+                BlockUtils.damageTool(player, hand, 1);
+            } else if (OTHER_SHOVEABLE.contains(b.getType())) {
                 b.breakNaturally(hand);
+                BlockUtils.damageTool(player, hand, 1);
             }
-            BlockUtils.damageTool(player, hand, 1); // x2 durabilità totale
         }
-    }
-
-    private boolean isShoveable(Material mat) {
-        return switch (mat) {
-            case DIRT, GRASS_BLOCK, COARSE_DIRT, ROOTED_DIRT, PODZOL,
-                    SAND, RED_SAND, GRAVEL, CLAY, SOUL_SAND, SOUL_SOIL,
-                    DIRT_PATH, MYCELIUM, SNOW, SNOW_BLOCK -> true;
-            default -> false;
-        };
     }
 }

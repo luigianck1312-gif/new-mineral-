@@ -21,7 +21,6 @@ public class EmberLitePlugin extends JavaPlugin {
         swordManager = new SwordManager(this);
         armorManager = new ArmorManager(this);
 
-        // Registra listeners
         getServer().getPluginManager().registerEvents(new SwordListener(this, swordManager), this);
         getServer().getPluginManager().registerEvents(new ArmorListener(this, armorManager), this);
         getServer().getPluginManager().registerEvents(new PickaxeListener(this), this);
@@ -30,12 +29,12 @@ public class EmberLitePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HoeListener(this), this);
         getServer().getPluginManager().registerEvents(new BowListener(this), this);
 
-        getLogger().info("§aEmberlite caricato! Set Aetherium pronto.");
+        getLogger().info("Emberlite caricato! Set Aetherium pronto.");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("§cEmberlite disabilitato.");
+        getLogger().info("Emberlite disabilitato.");
     }
 
     @Override
@@ -79,7 +78,7 @@ public class EmberLitePlugin extends JavaPlugin {
             default -> null;
         };
         if (item == null) {
-            sender.sendMessage("§cOggetto non valido! Usa: spada, elmo, petto, gambe, stivali, piccone, ascia, pala, zappa, arco");
+            sender.sendMessage("§cOggetto non valido!");
             return;
         }
         target.getInventory().addItem(item);

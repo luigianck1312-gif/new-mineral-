@@ -15,13 +15,14 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.Set;
+
 public class BowListener implements Listener {
 
     private final EmberLitePlugin plugin;
     private static final String META_KEY = "aetherium_arrow";
 
-    // Blocchi rari che non vengono distrutti dall'esplosione
-    private static final java.util.Set<Material> PROTECTED = java.util.Set.of(
+    private static final Set<Material> PROTECTED = Set.of(
             Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE,
             Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE,
             Material.ANCIENT_DEBRIS, Material.NETHER_GOLD_ORE,
@@ -31,6 +32,15 @@ public class BowListener implements Listener {
             Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE,
             Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE,
             Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE
+    );
+
+    private static final Set<Material> FRAGILE = Set.of(
+            Material.DIRT, Material.GRASS_BLOCK, Material.SAND, Material.RED_SAND,
+            Material.GRAVEL, Material.CLAY, Material.GLASS, Material.GLASS_PANE,
+            Material.OAK_LEAVES, Material.BIRCH_LEAVES, Material.ACACIA_LEAVES,
+            Material.JUNGLE_LEAVES, Material.SPRUCE_LEAVES, Material.DARK_OAK_LEAVES,
+            Material.MANGROVE_LEAVES, Material.CHERRY_LEAVES,
+            Material.SNOW, Material.SNOW_BLOCK, Material.ICE, Material.COBWEB
     );
 
     public BowListener(EmberLitePlugin plugin) {
@@ -47,7 +57,6 @@ public class BowListener implements Listener {
 
         arrow.setMetadata(META_KEY, new FixedMetadataValue(plugin, true));
 
-        // Consuma più durabilità arco
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             it.emberlite.utils.BlockUtils.damageTool(player, bow, 2);
         }, 1L);
@@ -61,23 +70,20 @@ public class BowListener implements Listener {
 
         Location loc = arrow.getLocation();
         arrow.remove();
-        event.setCancelled(true); // Previeni il danno vanilla della freccia
+        event.setCancelled(true);
 
-        // Effetti visivi/sonori
         loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 5, 0.5, 0.5, 0.5, 0);
         loc.getWorld().spawnParticle(Particle.SMOKE_LARGE, loc, 15, 0.5, 0.5, 0.5, 0.05);
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 0.6f, 1.8f);
 
-        // Danno ai mob/giocatori vicini (raggio ~2)
         for (Entity entity : loc.getWorld().getNearbyEntities(loc, 2.5, 2.5, 2.5)) {
             if (entity instanceof LivingEntity living && !entity.equals(shooter)) {
                 double dist = entity.getLocation().distance(loc);
-                double damage = Math.max(1.0, 6.0 - dist * 1.5); // Danno ridotto con distanza
+                double damage = Math.max(1.0, 6.0 - dist * 1.5);
                 living.damage(damage, shooter);
             }
         }
 
-        // Rompe blocchi vicini (esclusi quelli protetti)
         breakNearbyBlocks(loc, 1);
     }
 
@@ -88,22 +94,11 @@ public class BowListener implements Listener {
                     Block b = center.getBlock().getRelative(dx, dy, dz);
                     if (b.getType().isAir()) continue;
                     if (PROTECTED.contains(b.getType())) continue;
-                    // Solo blocchi deboli
-                    if (isFragile(b.getType())) {
+                    if (FRAGILE.contains(b.getType())) {
                         b.breakNaturally();
                     }
                 }
             }
         }
-    }
-
-    private boolean isFragile(Material mat) {
-        return switch (mat) {
-            case DIRT, GRASS_BLOCK, SAND, RED_SAND, GRAVEL, CLAY,
-                    GLASS, GLASS_PANE, LEAVES, OAK_LEAVES, BIRCH_LEAVES,
-                    ACACIA_LEAVES, JUNGLE_LEAVES, SPRUCE_LEAVES, DARK_OAK_LEAVES,
-                    MANGROVE_LEAVES, SNOW, SNOW_BLOCK, ICE, COBWEB -> true;
-            default -> false;
-        };
     }
 }

@@ -28,9 +28,6 @@ public class SwordListener implements Listener {
         ItemStack hand = player.getInventory().getItemInMainHand();
         if (!AetheriumItems.isAetherium(hand, AetheriumItems.TYPE_SWORD)) return;
 
-        // Danno base: netherite sword = 8 ATK + 1 extra
-        // Gestiamo il +1 manualmente (sharpness 6 già nel craft è approx equivalente)
-        // Il danno è già applicato dall'enchant, aggiungiamo solo la logica combo
         swordManager.registerHit(player, target);
     }
 }
