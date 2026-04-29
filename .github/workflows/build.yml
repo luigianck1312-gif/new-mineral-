@@ -1,0 +1,29 @@
+name: Build Emberlite
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codice
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build con Maven
+        run: mvn clean package -B
+
+      - name: Upload .jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: Emberlite
+          path: target/Emberlite-1.0.0.jar
